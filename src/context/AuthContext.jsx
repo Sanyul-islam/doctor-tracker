@@ -1,38 +1,44 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { api } from "@/lib/api";
 
 const AuthContext = createContext(null);
 
-const AUTH_STORAGE_KEY = "dt_auth_session";
-
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
   const router = useRouter();
   const pathname = usePathname();
 
-  // Load session from localStorage on mount
-  useEffect(() => {
+  // Restore authentication from Backend cookie
+  const checkAuth = useCallback(async () => {
     try {
-      const savedSession = localStorage.getItem(AUTH_STORAGE_KEY);
-      if (savedSession) {
-        const parsed = JSON.parse(savedSession);
-        if (parsed.user && parsed.token) {
-          setUser(parsed.user);
-          setToken(parsed.token);
-        }
+      const res = await api.getMe();
+
+      if (res.success && res.admin) {
+        setUser(res.admin);
+      } else {
+        setUser(null);
       }
-    } catch (e) {
-      console.error("Failed to restore auth session:", e);
-      localStorage.removeItem(AUTH_STORAGE_KEY);
+    } catch (error) {
+      setUser(null);
     } finally {
       setIsLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   // Route protection
   useEffect(() => {
@@ -47,33 +53,32 @@ export function AuthProvider({ children }) {
     }
   }, [user, isLoading, pathname, router]);
 
+  // Login
   const login = useCallback(async (email, password) => {
-    try {
-      const res = await api.login({ email, password });
-      if (res && res.user) {
-        setUser(res.user);
-        setToken(res.token);
-        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({ user: res.user, token: res.token }));
-        return { success: true };
-      }
-      throw new Error("Invalid credentials or server response");
-    } catch (err) {
-      throw err;
+    const res = await api.login({ email, password });
+
+    if (res.success && res.admin) {
+      setUser(res.admin);
+      return { success: true };
     }
+
+    throw new Error(res.message || "Invalid credentials");
   }, []);
 
-  const logout = useCallback(() => {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem(AUTH_STORAGE_KEY);
-    router.push("/login");
+  // Logout
+  const logout = useCallback(async () => {
+    try {
+      await api.logout();
+    } finally {
+      setUser(null);
+      router.replace("/login");
+    }
   }, [router]);
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        token,
         isAuthenticated: !!user,
         isLoading,
         login,
@@ -87,9 +92,10 @@ export function AuthProvider({ children }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
+
   if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
+
   return context;
 }
-

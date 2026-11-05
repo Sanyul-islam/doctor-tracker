@@ -32,16 +32,16 @@ const PIE_COLORS = [
 function CustomTooltip({ active, payload, label }) {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-slate-900 text-white p-3 rounded-xl shadow-xl border border-slate-800 text-xs">
-        <p className="font-semibold text-slate-300 mb-1">{label}</p>
+      <div className="bg-sky-50 text-slate-900 p-3 rounded-xl shadow-xl border border-sky-200 text-xs">
+        <p className="font-semibold text-slate-700 mb-1">{label}</p>
         {payload.map((entry, index) => (
           <p key={`item-${index}`} className="flex items-center gap-2">
             <span
               className="w-2 h-2 rounded-full"
               style={{ backgroundColor: entry.color || entry.fill }}
             />
-            <span className="text-slate-400 capitalize">{entry.name}:</span>
-            <span className="font-bold text-white">{entry.value}</span>
+            <span className="text-slate-500 capitalize">{entry.name}:</span>
+            <span className="font-bold text-slate-900">{entry.value}</span>
           </p>
         ))}
       </div>
@@ -54,17 +54,17 @@ export function PatientsPerDoctorChart({ data = [] }) {
   const chartData = data.slice(0, 8); // Top doctors
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+    <div className="bg-sky-50/60 border border-sky-100 rounded-2xl p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight">
+          <h3 className="text-sm font-bold text-slate-900 tracking-tight">
             Patient Workload per Doctor
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-slate-500">
             Current active patient assignments across attending physicians
           </p>
         </div>
-        <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
+        <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200">
           Top 8 Doctors
         </span>
       </div>
@@ -104,22 +104,22 @@ export function PatientsPerDoctorChart({ data = [] }) {
 
 export function DateBasedAdmissionTrendChart({ data = [] }) {
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+    <div className="bg-sky-50/60 border border-sky-100 rounded-2xl p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight">
-            Admission & Discharge Trends
+          <h3 className="text-sm font-bold text-slate-900 tracking-tight">
+            Admission &amp; Discharge Trends
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-slate-500">
             6-month trajectory of monthly patient intake vs successful discharge
           </p>
         </div>
         <div className="flex items-center gap-3 text-xs">
-          <span className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400 font-medium">
+          <span className="flex items-center gap-1.5 text-indigo-600 font-medium">
             <span className="w-2.5 h-2.5 rounded-full bg-indigo-500" />
             Admissions
           </span>
-          <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium">
+          <span className="flex items-center gap-1.5 text-emerald-600 font-medium">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
             Discharges
           </span>
@@ -170,12 +170,12 @@ export function DateBasedAdmissionTrendChart({ data = [] }) {
 
 export function ConditionDistributionChart({ data = [] }) {
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+    <div className="bg-sky-50/60 border border-sky-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
       <div className="mb-2">
-        <h3 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight">
+        <h3 className="text-sm font-bold text-slate-900 tracking-tight">
           Condition Categories
         </h3>
-        <p className="text-xs text-slate-500 dark:text-slate-400">
+        <p className="text-xs text-slate-500">
           Patient diagnosis breakdown by medical department
         </p>
       </div>
@@ -210,7 +210,7 @@ export function ConditionDistributionChart({ data = [] }) {
               <Tooltip content={<CustomTooltip />} />
               <Legend
                 formatter={(value) => (
-                  <span className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
+                  <span className="text-[11px] text-slate-600 font-medium">
                     {value}
                   </span>
                 )}

@@ -165,10 +165,10 @@ export default function PatientsPage() {
         {/* Header Title & Add Action */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
               Patient Management & Records
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+            <p className="text-xs sm:text-sm text-slate-500 mt-1">
               Centralized register of patient diagnoses, assigned physicians, and recovery milestones.
             </p>
           </div>
@@ -195,7 +195,7 @@ export default function PatientsPage() {
             className={`p-3 rounded-xl border cursor-pointer transition-all ${
               status === "ALL"
                 ? "bg-slate-900 text-white border-slate-800 shadow-sm"
-                : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:border-slate-300"
+                : "bg-white text-slate-600 border-sky-200 hover:border-sky-300"
             }`}
           >
             <span className="text-[10px] uppercase font-bold tracking-wider block opacity-75">
@@ -212,7 +212,7 @@ export default function PatientsPage() {
             className={`p-3 rounded-xl border cursor-pointer transition-all ${
               status === "Active"
                 ? "bg-sky-600 text-white border-sky-600 shadow-sm"
-                : "bg-white dark:bg-slate-900 text-sky-600 dark:text-sky-400 border-slate-200 dark:border-slate-800 hover:border-sky-300"
+                : "bg-white text-sky-600 border-sky-200 hover:border-sky-400"
             }`}
           >
             <span className="text-[10px] uppercase font-bold tracking-wider block opacity-75">
@@ -229,7 +229,7 @@ export default function PatientsPage() {
             className={`p-3 rounded-xl border cursor-pointer transition-all ${
               status === "In Treatment"
                 ? "bg-amber-600 text-white border-amber-600 shadow-sm"
-                : "bg-white dark:bg-slate-900 text-amber-600 dark:text-amber-400 border-slate-200 dark:border-slate-800 hover:border-amber-300"
+                : "bg-white text-amber-600 border-amber-200 hover:border-amber-400"
             }`}
           >
             <span className="text-[10px] uppercase font-bold tracking-wider block opacity-75">
@@ -246,7 +246,7 @@ export default function PatientsPage() {
             className={`p-3 rounded-xl border cursor-pointer transition-all ${
               status === "Recovered"
                 ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
-                : "bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 border-slate-200 dark:border-slate-800 hover:border-emerald-300"
+                : "bg-white text-emerald-600 border-emerald-200 hover:border-emerald-400"
             }`}
           >
             <span className="text-[10px] uppercase font-bold tracking-wider block opacity-75">
@@ -263,7 +263,7 @@ export default function PatientsPage() {
             className={`p-3 rounded-xl border cursor-pointer transition-all col-span-2 sm:col-span-1 ${
               status === "Critical"
                 ? "bg-rose-600 text-white border-rose-600 shadow-sm"
-                : "bg-white dark:bg-slate-900 text-rose-600 dark:text-rose-400 border-slate-200 dark:border-slate-800 hover:border-rose-300"
+                : "bg-white text-rose-600 border-rose-200 hover:border-rose-400"
             }`}
           >
             <span className="text-[10px] uppercase font-bold tracking-wider block opacity-75">
@@ -274,7 +274,7 @@ export default function PatientsPage() {
         </div>
 
         {/* Search & Filters Controls */}
-        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+        <div className="p-4 rounded-2xl bg-sky-50/60 border border-sky-100 shadow-sm space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             {/* Search */}
             <div className="relative lg:col-span-2">
@@ -287,7 +287,7 @@ export default function PatientsPage() {
                   setSearch(e.target.value);
                   setPagination((p) => ({ ...p, page: 1 }));
                 }}
-                className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full pl-9 pr-3 py-2 rounded-xl border border-sky-200 bg-white text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400"
               />
               {search && (
                 <button
@@ -307,7 +307,7 @@ export default function PatientsPage() {
                   setCondition(e.target.value);
                   setPagination((p) => ({ ...p, page: 1 }));
                 }}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 rounded-xl border border-sky-200 bg-white text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-400"
               >
                 <option value="ALL">All Conditions</option>
                 {CONDITION_CATEGORIES.map((c) => (
@@ -326,7 +326,7 @@ export default function PatientsPage() {
                   setDoctorId(e.target.value);
                   setPagination((p) => ({ ...p, page: 1 }));
                 }}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 rounded-xl border border-sky-200 bg-white text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-400"
               >
                 <option value="ALL">All Attending Doctors</option>
                 {doctorsList.map((doc) => (
@@ -347,7 +347,7 @@ export default function PatientsPage() {
                   setStartDate(e.target.value);
                   setPagination((p) => ({ ...p, page: 1 }));
                 }}
-                className="w-1/2 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-1/2 px-2.5 py-1.5 rounded-xl border border-sky-200 bg-white text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-400"
               />
               <span className="text-slate-400 text-xs">to</span>
               <input
@@ -358,20 +358,20 @@ export default function PatientsPage() {
                   setEndDate(e.target.value);
                   setPagination((p) => ({ ...p, page: 1 }));
                 }}
-                className="w-1/2 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-1/2 px-2.5 py-1.5 rounded-xl border border-sky-200 bg-white text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-400"
               />
             </div>
           </div>
 
           {/* Reset Filters chip */}
           {hasActiveFilters && (
-            <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
+            <div className="flex items-center justify-between pt-2 border-t border-sky-100 text-xs">
               <span className="text-slate-500">
                 Found <strong>{pagination.total}</strong> matching patient records
               </span>
               <button
                 onClick={handleResetFilters}
-                className="flex items-center gap-1 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"
+                className="flex items-center gap-1 text-xs font-semibold text-sky-600 hover:text-sky-800 hover:underline"
               >
                 <RotateCcw className="w-3 h-3" />
                 Clear all filters
@@ -387,18 +387,18 @@ export default function PatientsPage() {
             <p className="text-sm font-medium">Fetching patient records...</p>
           </div>
         ) : patients.length === 0 ? (
-          <div className="p-12 text-center rounded-2xl bg-white dark:bg-slate-900 border border-dashed border-slate-200 dark:border-slate-800">
+          <div className="p-12 text-center rounded-2xl bg-sky-50/40 border border-dashed border-sky-200">
             <Users className="w-12 h-12 text-slate-400 mx-auto mb-3 opacity-40" />
-            <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">
+            <h3 className="text-base font-semibold text-slate-800">
               No patients found matching query
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto mt-1 mb-4">
+            <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1 mb-4">
               Try adjusting your condition filters, search terms, or intake a new patient.
             </p>
             {hasActiveFilters ? (
               <button
                 onClick={handleResetFilters}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 transition-colors"
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-sky-100 hover:bg-sky-200 text-sky-700 transition-colors"
               >
                 Reset Filters
               </button>

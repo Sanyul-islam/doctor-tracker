@@ -9,11 +9,12 @@ import {
   Users,
   Activity,
   LogOut,
-  Database,
   RefreshCw,
   Server,
   Layers,
   X,
+  Stethoscope,
+  Sparkles,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
@@ -25,19 +26,16 @@ const NAV_ITEMS = [
     name: "Dashboard",
     href: "/dashboard",
     icon: LayoutDashboard,
-    badge: null,
   },
   {
     name: "Doctors",
     href: "/doctors",
     icon: UserCheck,
-    badge: null,
   },
   {
     name: "Patients",
     href: "/patients",
     icon: Users,
-    badge: null,
   },
 ];
 
@@ -59,7 +57,7 @@ export function Sidebar({ isOpen, onClose }) {
     toast.info(
       nextMode === "real"
         ? "Switched to Express REST API mode (http://localhost:5000/api)"
-        : "Switched to Mock / LocalStorage standalone mode",
+        : "Switched to Standalone Mock / LocalStorage mode",
       "API Configuration Updated"
     );
   };
@@ -84,7 +82,7 @@ export function Sidebar({ isOpen, onClose }) {
       {/* Mobile Backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-sky-950/30 backdrop-blur-sm lg:hidden transition-opacity"
           onClick={onClose}
         />
       )}
@@ -92,37 +90,38 @@ export function Sidebar({ isOpen, onClose }) {
       {/* Sidebar container */}
       <aside
         className={cn(
-          "fixed top-0 bottom-0 left-0 z-40 w-64 bg-slate-900 text-slate-300 border-r border-slate-800 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0",
+          "fixed top-0 bottom-0 left-0 z-40 w-64 bg-white/90 backdrop-blur-xl text-slate-700 border-r border-sky-100 shadow-[4px_0_30px_rgba(186,230,253,0.22)] flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {/* Logo / Brand */}
-        <div className="h-16 flex items-center justify-between px-6 border-b border-slate-800 shrink-0">
+        <div className="h-16 flex items-center justify-between px-6 border-b border-sky-100/80 bg-gradient-to-r from-white via-sky-50/50 to-white shrink-0">
           <Link href="/dashboard" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-sky-400 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-500 via-sky-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-sky-500/30 group-hover:scale-105 transition-all">
               <Activity className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-base font-bold text-white tracking-tight flex items-center gap-1.5">
-                Doctor<span className="text-indigo-400">Tracker</span>
+              <span className="text-base font-extrabold text-slate-900 tracking-tight flex items-center gap-1">
+                Doctor<span className="text-sky-600">Tracker</span>
               </span>
-              <span className="block text-[10px] text-slate-400 tracking-wider uppercase font-semibold">
-                Admin Console
+              <span className="block text-[10px] text-sky-700 font-semibold tracking-wider uppercase">
+                Clinical Console
               </span>
             </div>
           </Link>
           <button
             onClick={onClose}
-            className="lg:hidden text-slate-400 hover:text-white p-1 rounded-lg"
+            className="lg:hidden text-slate-400 hover:text-slate-700 p-1.5 rounded-xl hover:bg-sky-50 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Navigation list */}
-        <div className="flex-1 overflow-y-auto px-4 py-6 space-y-1">
-          <div className="px-3 mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">
-            Core Portal
+        <div className="flex-1 overflow-y-auto px-4 py-6 space-y-1.5">
+          <div className="px-3 mb-2 text-[10px] font-bold uppercase tracking-wider text-sky-700/80 flex items-center gap-1.5">
+            <Stethoscope className="w-3.5 h-3.5 text-sky-500" />
+            Management Portal
           </div>
           {NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
@@ -133,65 +132,61 @@ export function Sidebar({ isOpen, onClose }) {
                 href={item.href}
                 onClick={onClose}
                 className={cn(
-                  "flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all group",
+                  "flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all group",
                   isActive
-                    ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+                    ? "bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-lg shadow-sky-500/25"
+                    : "text-slate-600 hover:text-sky-700 hover:bg-sky-50/80"
                 )}
               >
                 <div className="flex items-center gap-3">
                   <Icon
                     className={cn(
                       "w-5 h-5 transition-transform group-hover:scale-110",
-                      isActive ? "text-white" : "text-slate-400"
+                      isActive ? "text-white" : "text-sky-600"
                     )}
                   />
                   <span>{item.name}</span>
                 </div>
-                {item.badge && (
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">
-                    {item.badge}
-                  </span>
-                )}
               </Link>
             );
           })}
 
           {/* Integration & Developer Tools */}
-          <div className="pt-6 px-3 mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">
-            Backend & Mode
+          <div className="pt-6 px-3 mb-2 text-[10px] font-bold uppercase tracking-wider text-sky-700/80 flex items-center gap-1.5">
+            <Server className="w-3.5 h-3.5 text-sky-500" />
+            Backend Connection
           </div>
 
-          <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-800 space-y-2.5">
+          <div className="p-3.5 rounded-2xl bg-gradient-to-br from-sky-50/80 to-blue-50/50 border border-sky-100 shadow-sm space-y-2.5">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-300 flex items-center gap-1.5">
-                <Server className="w-3.5 h-3.5 text-indigo-400" />
+              <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-sky-500" />
                 Data Source
               </span>
               <span
                 className={cn(
-                  "text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider",
+                  "text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider border",
                   apiMode === "real"
-                    ? "bg-emerald-950 text-emerald-400 border border-emerald-800"
-                    : "bg-sky-950 text-sky-400 border border-sky-800"
+                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                    : "bg-sky-100 text-sky-800 border-sky-200"
                 )}
               >
-                {apiMode === "real" ? "Express REST" : "Standalone Demo"}
+                {apiMode === "real" ? "Express REST" : "Standalone Seed"}
               </span>
             </div>
 
-            <p className="text-[11px] text-slate-400 leading-snug">
+            <p className="text-[11px] text-slate-500 leading-relaxed">
               {apiMode === "real"
-                ? "Connecting to Express server at :5000 with MongoDB."
-                : "Active with browser seed store (zero setup needed)."}
+                ? "Connected to Express server at port 5000 with MongoDB."
+                : "Standalone browser store (zero installation needed)."}
             </p>
 
             <button
               onClick={handleToggleMode}
-              className="w-full text-xs py-1.5 px-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors flex items-center justify-center gap-1.5 border border-slate-700"
+              className="w-full text-xs font-semibold py-2 px-2.5 rounded-xl bg-white hover:bg-sky-50 text-sky-700 transition-all flex items-center justify-center gap-1.5 border border-sky-200 shadow-xs hover:border-sky-300"
             >
-              <Layers className="w-3.5 h-3.5" />
-              Switch to {apiMode === "mock" ? "Express REST" : "Mock Store"}
+              <Layers className="w-3.5 h-3.5 text-sky-600" />
+              Switch to {apiMode === "mock" ? "Express REST" : "Demo Store"}
             </button>
           </div>
 
@@ -199,26 +194,26 @@ export function Sidebar({ isOpen, onClose }) {
             <button
               onClick={handleResetData}
               disabled={isResetting}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 transition-colors"
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-slate-500 hover:text-sky-700 hover:bg-sky-50 transition-colors"
             >
-              <RefreshCw className={cn("w-3.5 h-3.5", isResetting && "animate-spin")} />
-              Reset Demo Data
+              <RefreshCw className={cn("w-3.5 h-3.5 text-sky-500", isResetting && "animate-spin")} />
+              Reset Sample Records
             </button>
           </div>
         </div>
 
         {/* User Card & Logout */}
-        <div className="p-4 border-t border-slate-800 bg-slate-900/80 shrink-0">
+        <div className="p-4 border-t border-sky-100 bg-gradient-to-b from-white to-sky-50/40 shrink-0">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-9 h-9 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold flex items-center justify-center text-xs shrink-0">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-sky-400 to-indigo-600 text-white font-bold flex items-center justify-center text-xs shrink-0 shadow-md shadow-sky-500/20">
                 {user?.avatar || "AD"}
               </div>
               <div className="truncate">
-                <div className="text-sm font-semibold text-white truncate">
-                  {user?.name || "Administrator"}
+                <div className="text-xs font-bold text-slate-900 truncate">
+                  {user?.name || "Dr. Evelyn Reed"}
                 </div>
-                <div className="text-[11px] text-slate-400 truncate">
+                <div className="text-[10px] text-sky-700 font-medium truncate">
                   {user?.email || "admin@doctortracker.com"}
                 </div>
               </div>
@@ -227,7 +222,7 @@ export function Sidebar({ isOpen, onClose }) {
 
           <button
             onClick={logout}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-rose-400 hover:bg-rose-950/30 hover:text-rose-300 border border-rose-900/40 transition-colors"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 border border-rose-200/80 transition-colors"
           >
             <LogOut className="w-3.5 h-3.5" />
             Sign Out
@@ -237,4 +232,3 @@ export function Sidebar({ isOpen, onClose }) {
     </>
   );
 }
-

@@ -44,17 +44,17 @@ export function ToastProvider({ children }) {
       <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none">
         {toasts.map((item) => {
           const typeStyles = {
-            success: "bg-emerald-950/90 text-emerald-200 border-emerald-800 shadow-emerald-950/40",
-            error: "bg-rose-950/90 text-rose-200 border-rose-800 shadow-rose-950/40",
-            warning: "bg-amber-950/90 text-amber-200 border-amber-800 shadow-amber-950/40",
-            info: "bg-sky-950/90 text-sky-200 border-sky-800 shadow-sky-950/40",
-          }[item.type] || "bg-slate-900/90 text-slate-200 border-slate-700";
+            success: "bg-emerald-50 text-emerald-800 border-emerald-200 shadow-emerald-200/40",
+            error: "bg-rose-50 text-rose-800 border-rose-200 shadow-rose-200/40",
+            warning: "bg-amber-50 text-amber-800 border-amber-200 shadow-amber-200/40",
+            info: "bg-sky-50 text-sky-800 border-sky-200 shadow-sky-200/40",
+          }[item.type] || "bg-white text-slate-800 border-slate-200";
 
           const icons = {
-            success: <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />,
-            error: <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" />,
-            warning: <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />,
-            info: <Info className="w-5 h-5 text-sky-400 shrink-0" />,
+            success: <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />,
+            error: <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />,
+            warning: <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0" />,
+            info: <Info className="w-5 h-5 text-sky-600 shrink-0" />,
           }[item.type];
 
           return (
@@ -65,15 +65,15 @@ export function ToastProvider({ children }) {
               {icons}
               <div className="flex-1 min-w-0">
                 {item.title && (
-                  <h4 className="text-sm font-semibold tracking-tight text-white mb-0.5">
+                  <h4 className="text-sm font-semibold tracking-tight text-slate-900 mb-0.5">
                     {item.title}
                   </h4>
                 )}
-                <p className="text-xs leading-relaxed text-slate-300">{item.message}</p>
+                <p className="text-xs leading-relaxed text-slate-600">{item.message}</p>
               </div>
               <button
                 onClick={() => removeToast(item.id)}
-                className="text-slate-400 hover:text-white transition-colors p-1 rounded-lg"
+                className="text-slate-500 hover:text-slate-800 transition-colors p-1 rounded-lg"
               >
                 <X className="w-4 h-4" />
               </button>
