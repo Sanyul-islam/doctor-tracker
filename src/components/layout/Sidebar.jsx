@@ -150,56 +150,6 @@ export function Sidebar({ isOpen, onClose }) {
               </Link>
             );
           })}
-
-          {/* Integration & Developer Tools */}
-          <div className="pt-6 px-3 mb-2 text-[10px] font-bold uppercase tracking-wider text-sky-700/80 flex items-center gap-1.5">
-            <Server className="w-3.5 h-3.5 text-sky-500" />
-            Backend Connection
-          </div>
-
-          <div className="p-3.5 rounded-2xl bg-gradient-to-br from-sky-50/80 to-blue-50/50 border border-sky-100 shadow-sm space-y-2.5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-sky-500" />
-                Data Source
-              </span>
-              <span
-                className={cn(
-                  "text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider border",
-                  apiMode === "real"
-                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                    : "bg-sky-100 text-sky-800 border-sky-200"
-                )}
-              >
-                {apiMode === "real" ? "Express REST" : "Standalone Seed"}
-              </span>
-            </div>
-
-            <p className="text-[11px] text-slate-500 leading-relaxed">
-              {apiMode === "real"
-                ? "Connected to Express server at port 5000 with MongoDB."
-                : "Standalone browser store (zero installation needed)."}
-            </p>
-
-            <button
-              onClick={handleToggleMode}
-              className="w-full text-xs font-semibold py-2 px-2.5 rounded-xl bg-white hover:bg-sky-50 text-sky-700 transition-all flex items-center justify-center gap-1.5 border border-sky-200 shadow-xs hover:border-sky-300"
-            >
-              <Layers className="w-3.5 h-3.5 text-sky-600" />
-              Switch to {apiMode === "mock" ? "Express REST" : "Demo Store"}
-            </button>
-          </div>
-
-          <div className="pt-2">
-            <button
-              onClick={handleResetData}
-              disabled={isResetting}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-slate-500 hover:text-sky-700 hover:bg-sky-50 transition-colors"
-            >
-              <RefreshCw className={cn("w-3.5 h-3.5 text-sky-500", isResetting && "animate-spin")} />
-              Reset Sample Records
-            </button>
-          </div>
         </div>
 
         {/* User Card & Logout */}
