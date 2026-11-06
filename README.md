@@ -1,177 +1,418 @@
-# Doctor Tracker – Clinical Administration & Caseload Portal
 
-A secure, modern administrative web application built with **Next.js**, designed to manage healthcare providers, supervise patient caseloads, and visualize clinical metrics with sub-100ms UI responsiveness.
+# 🏥 Doctor Tracker
 
----
+A Full-Stack Doctor and Patient Management System
 
-## 1. Description
+## 📌 Description
 
-Doctor Tracker is a secure, role-protected administrative web portal engineered for healthcare systems and hospital networks to streamline the management of licensed physicians and their corresponding patient rosters. Focused on performance optimization, clean UX hierarchy, and data visualization, the platform empowers clinical administrators to monitor doctor workloads, track patient admissions and diagnosis distributions, execute multi-parameter queries and date-based filtering, and assign or discharge patients under attending doctors with complete auditability.
+Doctor Tracker is a full-stack web application designed to simplify doctor and patient management through a centralized admin dashboard. It allows administrators to manage doctor records, register and monitor patients, assign patients to doctors, track patient conditions and treatment statuses, and visualize healthcare statistics through interactive charts. The application provides a secure authentication system and a responsive interface, making healthcare data management more organized, efficient, and accessible.
 
----
+## 🌐 Live Demo
 
-## 2. Setup Guide
+- **Frontend:** https://doctor-tracker-jet-nine.vercel.app
+- **Backend API:** https://doctor-tracker-server-ebon.vercel.app
 
-Follow these steps to run the Next.js frontend locally in either **Standalone Demo Mode** (immediate testing with zero external dependencies) or **Connected Mode** (paired with an external Express + MongoDB REST API).
+## ✨ Key Features
+
+- Secure admin authentication.
+- Dashboard with healthcare statistics and analytics.
+- Complete Doctor Management (Create, Read, Update, Delete).
+- Complete Patient Management (Create, Read, Update, Delete).
+- Assign patients to doctors.
+- Search, filter, and paginate doctor and patient records.
+- Track patient conditions and treatment statuses.
+- View doctor-specific patient information.
+- Interactive charts for patient statistics and admissions.
+- Responsive dashboard for desktop and mobile devices.
+- MongoDB database integration.
+
+## 🛠️ Technology Stack
+
+### Frontend
+- Next.js
+- React
+- JavaScript
+- Tailwind CSS
+- HeroUI
+- Recharts
+
+### Backend
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- JSON Web Token (JWT)
+- bcryptjs
+- Cookie Parser
+- CORS
+
+### Deployment
+- Vercel (Frontend)
+- Vercel (Backend)
+- MongoDB Atlas / MongoDB
+
+## ⚙️ Setup Guide
+
+Follow these steps to run Doctor Tracker locally.
 
 ### Prerequisites
-- **Node.js** (v18.18+ or v20+ recommended)
-- **npm** (v9+) or **pnpm** / **yarn**
 
-### Step-by-Step Installation
+Make sure you have installed:
 
-1. **Clone the Repository & Navigate to Workspace:**
-   ```bash
-   git clone <YOUR_GITHUB_REPO_URL>
-   cd doctor_tracker
-   ```
+- Node.js (LTS version)
+- npm
+- Git
+- MongoDB or a MongoDB Atlas account
 
-2. **Install Dependencies:**
-   ```bash
-   npm install
-   ```
-   *(Note for Windows PowerShell users: if script execution is restricted, run `npm.cmd install`)*
+### 1. Clone the Repositories
 
-3. **Configure Environment Variables:**
-   Copy the provided `.env.example` to create your local `.env.local` configuration:
-   ```bash
-   cp .env.example .env.local
-   ```
+Clone the frontend repository:
 
-   **`.env.example` Contents:**
-   ```env
-   # Next.js Application Port
-   PORT=3000
-
-   # Target Express REST API Base URL (used when connected to backend)
-   NEXT_PUBLIC_API_URL=http://localhost:5000/api
-
-   # Default API Operating Mode: 'mock' (in-browser seed) or 'real' (Express backend)
-   NEXT_PUBLIC_DEFAULT_API_MODE=mock
-   ```
-
-4. **Launch the Development Server:**
-   ```bash
-   npm run dev
-   ```
-   Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-5. **Demo Administrator Credentials:**
-   You can either click the **"1-Click Fill"** button on the login screen or manually enter:
-   - **Email:** `admin@doctortracker.com`
-   - **Password:** `admin123`
-
----
-
-## 3. System Architecture
-
-The Doctor Tracker ecosystem employs a decoupled client-server architecture designed for high scalability, separation of concerns, and resilience.
-
-```
-+-----------------------------------------------------------------------------------+
-|                                 CLIENT APPLICATION                                |
-|                                Next.js (App Router)                               |
-|                                                                                   |
-|  +-------------------+   +--------------------+   +----------------------------+  |
-|  |  Dashboard Page   |   |   Doctors Page     |   |       Patients Page        |  |
-|  |  (Recharts, KPIs) |   |  (Filter, Modal)   |   |   (Search, Status Pills)   |  |
-|  +---------+---------+   +---------+----------+   +--------------+-------------+  |
-|            |                       |                             |                |
-|            +-----------------------+-----------------------------+                |
-|                                    |                                              |
-|                                    v                                              |
-|                      +---------------------------+                                |
-|                      |  Unified API Service Layer|                                |
-|                      |      (src/lib/api.js)     |                                |
-|                      +-------------+-------------+                                |
-+------------------------------------|----------------------------------------------+
-                                     |
-               +---------------------+---------------------+
-               | Mode: Real REST API                       | Mode: Standalone Fallback
-               v                                           v
-+-----------------------------+             +-------------------------------+
-|   EXPRESS REST BACKEND      |             |     LocalStorage / In-Memory  |
-|   (Node.js + Express 5)     |             |         Seed Database         |
-|   - /api/doctors            |             |   - INITIAL_DOCTORS           |
-|   - /api/patients           |             |   - INITIAL_PATIENTS          |
-|   - /api/analytics          |             +-------------------------------+
-+--------------+--------------+
-               |
-               v
-+-----------------------------+
-|      MONGODB DATABASE       |
-|   - Doctors Collection      |
-|     (Index: spec, hosp, dt) |
-|   - Patients Collection     |
-|     (Index: docId, cond, dt)|
-+-----------------------------+
+```bash
+git clone YOUR_FRONTEND_GITHUB_URL
+cd doctor-tracker
 ```
 
-### Data Flow Overview:
-1. **Presentation Layer:** Built with Next.js App Router and Tailwind CSS, utilizing reusable modular components (`DoctorTable`, `DoctorCard`, `PatientTable`, `DoctorDetailModal`, `StatCard`).
-2. **State & Notification Management:** React Context hooks (`AuthContext`, `ToastContext`) provide route authentication protection and immediate user feedback.
-3. **Resilient API Client (`src/lib/api.js`):** A unified API interface that queries standard REST endpoints (`/api/doctors`, `/api/patients`, `/api/analytics`). If the Express server is offline or set to demo mode, it seamlessly routes operations to a persistent seed store with identical pagination, search, and filtering capabilities.
-4. **Backend Contracts & MongoDB Schemas:** Clean REST API endpoints (`/api/doctors`, `/api/patients`, `/api/analytics`) and Mongoose schema definitions for straightforward connection to your standalone Express + MongoDB backend.
+Clone the backend repository separately:
+
+```bash
+git clone YOUR_BACKEND_GITHUB_URL
+cd doctor_tracker_server
+```
+
+### 2. Backend Installation
+
+Navigate to the backend directory:
+
+```bash
+cd doctor_tracker_server
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+### 3. Configure Backend Environment Variables
+
+Create a `.env` file in the backend root directory.
+
+Use the following configuration:
+
+```env
+PORT=5000
+
+MONGODB_URI=mongodb://127.0.0.1:27017/doctor_tracker
+
+CLIENT_URL=http://localhost:3000
+
+JWT_SECRET=your_secure_random_jwt_secret
+
+NODE_ENV=development
+
+ADMIN_NAME=Doctor Tracker Admin
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=your_secure_admin_password
+```
+
+For MongoDB Atlas, replace the local MongoDB URI with your Atlas connection string.
+
+### 4. Create the Admin Account
+
+Run the admin seeding script:
+
+```bash
+npm run seed:admin
+```
+
+This creates the initial administrator account using the credentials configured in your backend `.env` file.
+
+### 5. Start the Backend Server
+
+```bash
+npm run dev
+```
+
+The backend server will run at:
+
+```text
+http://localhost:5000
+```
+
+Health check endpoint:
+
+```text
+http://localhost:5000/
+```
+
+### 6. Frontend Installation
+
+Open another terminal and navigate to the frontend project directory:
+
+```bash
+cd doctor-tracker
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+### 7. Configure Frontend Environment Variables
+
+Create a `.env.local` file in the frontend root directory:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+```
+
+For local development, this connects the frontend directly to the local backend.
+
+**Note:** If you use the Next.js API rewrite configuration, make sure the API base URL matches that configuration.
+
+### 8. Start the Frontend
+
+```bash
+npm run dev
+```
+
+Open your browser:
+
+```text
+http://localhost:3000
+```
+
+You can now log in using the admin credentials configured in the backend `.env` file.
 
 ---
 
-## 4. Technical Decisions
+## 🏗️ System Architecture
 
-### Decision 1: Hybrid Client-Side Abstraction Layer vs. Hardcoded API Calls
-- **Context:** The frontend needed to be fully functional and demonstrable immediately while maintaining exact parity with an external standalone Express/MongoDB REST backend.
-- **Decision:** Implemented a unified API service abstraction (`src/lib/api.js`) featuring an adapter pattern. It exposes standard async methods (`api.getDoctors()`, `api.createPatient()`, `api.getDashboardAnalytics()`) that inspect `getApiMode()`. If `mode === 'real'`, it issues typed `fetch()` calls to `NEXT_PUBLIC_API_URL` with bearer tokens; if `mode === 'mock'`, it handles in-memory and `localStorage` mutations with simulated network latencies.
-- **Why this was chosen:**
-  1. Allows immediate UI evaluation, grading, and presentation without requiring a running MongoDB daemon or local database setup.
-  2. Ensures zero code changes to UI components when toggling between standalone demo mode and a live Express server.
-  3. Includes an in-app toggle in the sidebar so administrators can switch data sources on the fly.
+Doctor Tracker follows a client-server architecture. The Next.js frontend communicates with the Express.js backend, which handles authentication, business logic, API requests, and database operations.
 
-### Decision 2: React Context with Persistent Session Guard vs. External State Library (Redux / Zustand)
-- **Context:** Managing authentication status, user session persistence, and global toast notifications across routes.
-- **Decision:** Selected native React Context API (`AuthProvider` and `ToastProvider`) combined with `next/navigation` client-side route listeners over heavy state management libraries like Redux Toolkit.
-- **Why this was chosen:**
-  1. **Bundle Efficiency & Zero Boilerplate:** The application state consists primarily of server-derived data (doctors, patients, analytics) which is fetched on demand, plus auth credentials and toast notifications. Adding Redux would add unnecessary bundle overhead and boilerplate (actions, reducers, selectors) without functional benefit.
-  2. **Predictable SSR/CSR Boundary:** React 19 and Next.js 16 leverage Turbopack; keeping context light avoids hydration mismatches and simplifies the auth lifecycle.
-  3. **Instant Route Guarding:** The `useAuth` hook automatically protects all administrative routes (`/dashboard`, `/doctors`, `/patients`), instantly redirecting unauthenticated visitors to `/login` before DOM paint.
+### Architecture Overview
+
+```text
+          ┌──────────────────────┐
+          │      Admin User      │
+          └──────────┬───────────┘
+                     │
+                     ▼
+          ┌──────────────────────┐
+          │   Next.js Frontend   │
+          │                      │
+          │  Dashboard           │
+          │  Doctor Management   │
+          │  Patient Management  │
+          └──────────┬───────────┘
+                     │
+                     │ API Requests
+                     ▼
+          ┌──────────────────────┐
+          │   Express.js API     │
+          │                      │
+          │  Authentication     │
+          │  Middleware          │
+          │  Controllers         │
+          │  Routes              │
+          └──────────┬───────────┘
+                     │
+                     ▼
+          ┌──────────────────────┐
+          │    Mongoose ODM      │
+          └──────────┬───────────┘
+                     │
+                     ▼
+          ┌──────────────────────┐
+          │   MongoDB Database   │
+          │                      │
+          │  Admin Collection    │
+          │  Doctors Collection  │
+          │  Patients Collection │
+          └──────────────────────┘
+```
+
+### Data Flow
+
+1. The administrator interacts with the Next.js frontend.
+2. The frontend sends HTTP requests to the Express.js API.
+3. Next.js rewrites can forward frontend `/api` requests to the deployed backend.
+4. Authentication middleware verifies the HTTP-only JWT cookie for protected endpoints.
+5. Controllers process requests and execute database operations through Mongoose.
+6. MongoDB stores and retrieves application data.
+7. The backend returns JSON responses to the frontend.
+8. The frontend updates dashboard statistics, charts, and management interfaces.
+
+### Backend API Structure
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/auth/login` | Admin login |
+| GET | `/api/auth/me` | Get authenticated admin |
+| POST | `/api/auth/logout` | Admin logout |
+| GET | `/api/doctors` | Get all doctors |
+| POST | `/api/doctors` | Create doctor |
+| GET | `/api/doctors/:id` | Get doctor details |
+| PATCH | `/api/doctors/:id` | Update doctor |
+| DELETE | `/api/doctors/:id` | Delete doctor |
+| GET | `/api/patients` | Get all patients |
+| POST | `/api/patients` | Create patient |
+| GET | `/api/patients/:id` | Get patient details |
+| PATCH | `/api/patients/:id` | Update patient |
+| DELETE | `/api/patients/:id` | Delete patient |
+| GET | `/api/dashboard/stats` | Dashboard statistics |
+| GET | `/api/dashboard/patients-per-doctor` | Patients per doctor |
+| GET | `/api/dashboard/patients-by-month` | Monthly patient statistics |
+
+**Note:** All doctor, patient, and dashboard endpoints require admin authentication.
 
 ---
 
-## 5. Visual Evidence & UI Highlights
+## 🧠 Technical Decisions
 
-### Desktop Views
-- **Clinical Dashboard (`/dashboard`):**
-  - 4 Key Performance Indicator (KPI) cards: *Total Doctors*, *Active Patients*, *Avg. Patients/Doctor*, and *Critical In-Patients*.
-  - Workload bar chart showing patient distribution across top attending doctors.
-  - 6-month area chart visualizing patient admissions versus discharges.
-  - Donut chart depicting condition categories (Cardiovascular, Neurological, Orthopedic, etc.).
-  - Live activity feed showing recent patient intakes with color-coded status badges.
-- **Doctor Directory (`/doctors`):**
-  - Multi-parameter filter bar: live text search, specialization dropdown, hospital selector, and date-range inputs.
-  - Dual view toggle (Responsive Grid Cards vs. Clean Tabular Layout).
-  - Doctor detail modal featuring the physician's profile, contact information, and an embedded patient management section (add new patient under doctor, delete patient from doctor).
-- **Patient Directory (`/patients`):**
-  - Status summary pill buttons (*All*, *Active*, *In Treatment*, *Recovered*, *Critical*) for 1-click status filtering.
-  - Comprehensive clinical table with patient age, gender, assigned doctor, and condition badges.
-  - Complete CRUD modal with real-time field validation and destructive delete confirmation dialogs.
+### 1. HTTP-Only Cookie Authentication Instead of Local Storage
 
-### Mobile & Responsive Views
-- Off-canvas sliding drawer navigation with touch-friendly tap targets.
-- Horizontally scrollable clinical data tables and auto-stacking KPI stat cards.
-- Bottom-anchored animated toast notification system for instant feedback.
+For authentication, I implemented JWT-based authentication using HTTP-only cookies instead of storing authentication tokens in localStorage.
+
+**Why this approach?**
+
+- HTTP-only cookies cannot be accessed directly through JavaScript.
+- This reduces the risk of token theft through certain XSS attacks.
+- Cookies are automatically included in requests when credentials are configured correctly.
+- The backend validates the JWT token through authentication middleware.
+
+The login process generates a JWT and stores it in an HTTP-only cookie. Protected routes verify the cookie before allowing access to application resources.
+
+### 2. MongoDB with Mongoose for Data Management
+
+I chose MongoDB with Mongoose because the application manages related healthcare records, including doctors, patients, and administrators.
+
+**Why this approach?**
+
+- MongoDB provides flexible document-based data storage.
+- Mongoose provides schema validation and structured models.
+- References allow patients to be associated with doctors.
+- Population makes it easier to retrieve related doctor information with patient records.
+- Indexing improves query performance for frequently filtered data.
+
+This approach provides a flexible and maintainable database structure for doctor and patient management.
 
 ---
 
-## 6. Standalone Express & MongoDB Backend Integration
+## 📸 Visual Evidence
 
-To connect your standalone Express + MongoDB backend:
-1. Ensure your Express server exposes the standard RESTful endpoints:
-   - `GET /api/doctors` (supports `search`, `specialization`, `hospital`, `startDate`, `endDate`, `page`, `limit`)
-   - `POST /api/doctors`, `PUT /api/doctors/:id`, `DELETE /api/doctors/:id`
-   - `GET /api/doctors/:id/patients`
-   - `GET /api/patients` (supports `search`, `condition`, `status`, `doctorId`, `gender`, `startDate`, `endDate`, `page`, `limit`)
-   - `POST /api/patients`, `PUT /api/patients/:id`, `DELETE /api/patients/:id`
-   - `GET /api/analytics/dashboard`
-2. Configure MongoDB compound indexes for optimized query performance:
-   - Doctors: `{ specialization: 1, hospital: 1, createdAt: -1 }`
-   - Patients: `{ doctorId: 1, status: 1 }`, `{ conditionCategory: 1, admissionDate: -1 }`
-3. Start your Express server on port `5000` (or update `NEXT_PUBLIC_API_URL` in `.env.local`).
-4. In Doctor Tracker's sidebar, click **"Switch to Express REST"** or set `NEXT_PUBLIC_DEFAULT_API_MODE=real` in `.env.local`.
+The following screenshots demonstrate the application's user interface across desktop and mobile devices.
+
+### Desktop View
+
+#### Dashboard
+![Doctor Tracker Dashboard Desktop](./screenshots/dashboard-desktop.png)
+
+#### Doctor Management
+![Doctor Management Desktop](./screenshots/doctors-desktop.png)
+
+#### Patient Management
+![Patient Management Desktop](./screenshots/patients-desktop.png)
+
+### Mobile View
+
+#### Mobile Dashboard
+![Doctor Tracker Mobile Dashboard](./screenshots/dashboard-mobile.png)
+
+#### Mobile Doctor Management
+![Doctor Management Mobile](./screenshots/doctors-mobile.png)
+
+#### Mobile Patient Management
+![Patient Management Mobile](./screenshots/patients-mobile.png)
+
+
+
+---
+
+## 📁 Project Structure
+
+### Frontend
+
+```text
+doctor-tracker/
+├── public/
+├── src/
+│   ├── app/
+│   ├── components/
+│   │   ├── dashboard/
+│   │   ├── doctors/
+│   │   ├── patients/
+│   │   └── layout/
+│   ├── context/
+│   └── lib/
+│       ├── api.js
+│       └── mockData.js
+├── .env.local
+├── next.config.mjs
+└── package.json
+```
+
+### Backend
+
+```text
+doctor_tracker_server/
+├── scripts/
+│   └── seedAdmin.js
+├── src/
+│   ├── config/
+│   │   └── db.js
+│   ├── controllers/
+│   ├── middlewares/
+│   ├── models/
+│   ├── routes/
+│   ├── services/
+│   └── utils/
+├── server.js
+├── .env
+├── .env.example
+└── package.json
+```
+
+---
+
+## 🔐 Security
+
+- Passwords are hashed using bcryptjs.
+- JWT-based authentication protects private API endpoints.
+- Authentication tokens are stored in HTTP-only cookies.
+- CORS is configured to allow the authorized frontend origin.
+- Environment variables are used for sensitive configuration.
+- Protected routes require valid authentication.
+
+**Important:** Never commit `.env` or `.env.local` files containing real credentials or secrets to GitHub.
+
+---
+
+## 🚀 Future Improvements
+
+- Role-based access control.
+- Advanced patient medical history.
+- Appointment scheduling.
+- Prescription management.
+- Medical report uploads.
+- More advanced analytics and reporting.
+- Export patient and doctor records.
+
+---
+
+## 👨‍💻 Author
+
+**Md. Sanyul Islam**
+
+Full Stack Web Developer
+
+- **GitHub:** https://github.com/Sanyul-islam
+- **Portfolio:** https://sanyulislam.vercel.app/
+
+---
+
+## 📄 License
+
+This project was developed for educational and portfolio purposes.
