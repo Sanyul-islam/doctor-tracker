@@ -4,6 +4,7 @@ import { formatDate } from "@/lib/utils";
 import { Edit2, Trash2, Users } from "lucide-react";
 
 export function DoctorTable({ doctors, onViewPatients, onEdit, onDelete }) {
+  
   return (
     <div className="border border-sky-100 rounded-3xl overflow-hidden shadow-[0_4px_22px_rgba(186,230,253,0.18)] bg-white/90 backdrop-blur-md">
       <div className="overflow-x-auto">

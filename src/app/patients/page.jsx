@@ -77,13 +77,20 @@ export default function PatientsPage() {
         api.getDoctors({ limit: 100 }),
       ]);
 
-      setPatients(patientsRes.data || []);
-      setPagination(patientsRes.pagination || { page: 1, limit: 10, total: 0, totalPages: 1 });
-      setDoctorsList(doctorsRes.data || []);
+      setPatients(patientsRes.patients || []);
+
+      setPagination({
+        page: patientsRes.pagination?.currentPage || 1,
+        limit: patientsRes.pagination?.limit || 10,
+        total: patientsRes.pagination?.totalPatients || 0,
+        totalPages: patientsRes.pagination?.totalPages || 1,
+      });
+
+      setDoctorsList(doctorsRes.data || doctorsRes.doctors || []);
 
       // Calculate overview counters
-      const allPatientsRes = await api.getPatients({ limit: 500 });
-      const all = allPatientsRes.data || [];
+     const allPatientsRes = await api.getPatients({ limit: 100 });
+     const all = allPatientsRes.patients || [];
       setStatusStats({
         total: all.length,
         active: all.filter((p) => p.status === "Active").length,
@@ -126,7 +133,7 @@ export default function PatientsPage() {
 
   const handleSavePatient = async (formData) => {
     if (selectedPatientForEdit) {
-      await api.updatePatient(selectedPatientForEdit.id, formData);
+      await api.updatePatient(selectedPatientForEdit._id, formData);
       toast.success(`Updated patient record for ${formData.name}`);
     } else {
       await api.createPatient(formData);
@@ -139,7 +146,7 @@ export default function PatientsPage() {
     if (!patientToDelete) return;
     try {
       setIsDeleting(true);
-      await api.deletePatient(patientToDelete.id);
+      await api.deletePatient(patientToDelete._id);
       toast.success(`Removed patient ${patientToDelete.name}`);
       setPatientToDelete(null);
       fetchPatients();
@@ -330,7 +337,7 @@ export default function PatientsPage() {
               >
                 <option value="ALL">All Attending Doctors</option>
                 {doctorsList.map((doc) => (
-                  <option key={doc.id} value={doc.id}>
+                  <option key={doc._id} value={doc.id}>
                     {doc.name}
                   </option>
                 ))}

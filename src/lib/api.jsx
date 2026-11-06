@@ -169,91 +169,57 @@ export const api = {
   },
 
   async getDoctorById(id) {
-    return fetchWithFallback(`/doctors/${id}`, { method: "GET" }, () => {
-      const doctors = getStoredDoctors();
-      const doc = doctors.find((d) => d.id === id);
-      if (!doc) throw new Error("Doctor not found");
-      const patients = getStoredPatients().filter((p) => p.doctorId === id);
-      return { ...doc, patients, patientsCount: patients.length };
-    });
+    return apiRequest(`/doctors/${id}`);
   },
 
   async createDoctor(data) {
-    return fetchWithFallback(
-      "/doctors",
-      {
-        method: "POST",
-        body: JSON.stringify(data),
-      },
-      () => {
-        const doctors = getStoredDoctors();
-        // Validation
-        if (
-          !data.name ||
-          !data.specialization ||
-          !data.hospital ||
-          !data.phone ||
-          !data.email
-        ) {
-          throw new Error(
-            "All fields (Name, Specialization, Hospital, Phone, Email) are required.",
-          );
-        }
-        const newDoctor = {
-          id: `doc_${Date.now()}`,
-          name: data.name.trim(),
-          specialization: data.specialization.trim(),
-          hospital: data.hospital.trim(),
-          phone: data.phone.trim(),
-          email: data.email.trim(),
-          createdAt: new Date().toISOString(),
-          patientsCount: 0,
-        };
-        const updated = [newDoctor, ...doctors];
-        saveStoredDoctors(updated);
-        return newDoctor;
-      },
-    );
+    // 1. Validate and clean form data
+    const doctorData = {
+      name: data.name?.trim(),
+      specialization: data.specialization?.trim(),
+      hospital: data.hospital?.trim(),
+      phone: data.phone?.trim(),
+      email: data.email?.trim(),
+    };
+
+    // 2. Validate required fields
+    if (
+      !doctorData.name ||
+      !doctorData.specialization ||
+      !doctorData.hospital ||
+      !doctorData.phone ||
+      !doctorData.email
+    ) {
+      throw new Error(
+        "All fields (Name, Specialization, Hospital, Phone, Email) are required.",
+      );
+    }
+
+    // 3. Send data to backend
+    return apiRequest("/doctors", {
+      method: "POST",
+      body: JSON.stringify(doctorData),
+    });
   },
 
   async updateDoctor(id, data) {
-    return fetchWithFallback(
-      `/doctors/${id}`,
-      {
-        method: "PUT",
-        body: JSON.stringify(data),
-      },
-      () => {
-        const doctors = getStoredDoctors();
-        const index = doctors.findIndex((d) => d.id === id);
-        if (index === -1) throw new Error("Doctor not found");
+    if (!id) {
+      throw new Error("Doctor ID is required");
+    }
 
-        const updatedDoc = {
-          ...doctors[index],
-          ...data,
-          id, // preserve ID
-        };
-        doctors[index] = updatedDoc;
-        saveStoredDoctors(doctors);
-        return updatedDoc;
-      },
-    );
+    return apiRequest(`/doctors/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
   },
 
   async deleteDoctor(id) {
-    return fetchWithFallback(`/doctors/${id}`, { method: "DELETE" }, () => {
-      const doctors = getStoredDoctors();
-      const updatedDoctors = doctors.filter((d) => d.id !== id);
-      saveStoredDoctors(updatedDoctors);
+    if (!id) {
+      throw new Error("Doctor ID is required");
+    }
 
-      // Also unassign or remove linked patients
-      const patients = getStoredPatients();
-      const updatedPatients = patients.map((p) =>
-        p.doctorId === id ? { ...p, doctorId: null } : p,
-      );
-      saveStoredPatients(updatedPatients);
-
-      return { success: true, id };
+    return apiRequest(`/doctors/${id}`, {
+      method: "DELETE",
     });
   },
 
@@ -271,210 +237,74 @@ export const api = {
     sortBy = "createdAt",
     order = "desc",
   } = {}) {
-    const params = new URLSearchParams({
-      search,
-      condition,
-      status,
-      gender,
-      doctorId,
-      startDate,
-      endDate,
-      page: String(page),
-      limit: String(limit),
-      sortBy,
-      order,
-    });
+    const params = new URLSearchParams();
 
-    return fetchWithFallback(
-      `/patients?${params.toString()}`,
-      { method: "GET" },
-      () => {
-        let list = [...getStoredPatients()];
-        const doctors = getStoredDoctors();
+    if (search.trim()) params.set("search", search);
+    if (condition !== "ALL") {
+      params.set("conditionCategory", condition);
+    }
+    if (status !== "ALL") params.set("status", status);
+    if (gender !== "ALL") params.set("gender", gender);
+    if (doctorId !== "ALL") params.set("doctorId", doctorId);
+    if (startDate) params.set("startDate", startDate);
+    if (endDate) params.set("endDate", endDate);
 
-        // Search (Name, email, phone, condition)
-        if (search.trim()) {
-          const q = search.toLowerCase().trim();
-          list = list.filter(
-            (pat) =>
-              pat.name.toLowerCase().includes(q) ||
-              pat.condition.toLowerCase().includes(q) ||
-              (pat.conditionCategory &&
-                pat.conditionCategory.toLowerCase().includes(q)) ||
-              (pat.email && pat.email.toLowerCase().includes(q)) ||
-              (pat.phone && pat.phone.toLowerCase().includes(q)),
-          );
-        }
+    params.set("page", String(page));
+    params.set("limit", String(limit));
+    params.set("sortBy", sortBy);
+    params.set("order", order);
 
-        // Filter: Condition category
-        if (condition && condition !== "ALL") {
-          list = list.filter(
-            (p) =>
-              p.conditionCategory?.toLowerCase() === condition.toLowerCase() ||
-              p.condition?.toLowerCase().includes(condition.toLowerCase()),
-          );
-        }
-
-        // Filter: Status
-        if (status && status !== "ALL") {
-          list = list.filter(
-            (p) => p.status?.toLowerCase() === status.toLowerCase(),
-          );
-        }
-
-        // Filter: Gender
-        if (gender && gender !== "ALL") {
-          list = list.filter(
-            (p) => p.gender?.toLowerCase() === gender.toLowerCase(),
-          );
-        }
-
-        // Filter: Doctor
-        if (doctorId && doctorId !== "ALL") {
-          list = list.filter((p) => p.doctorId === doctorId);
-        }
-
-        // Filter: Date-wise (Admission date or Created at)
-        if (startDate) {
-          const start = new Date(startDate);
-          start.setHours(0, 0, 0, 0);
-          list = list.filter(
-            (p) => new Date(p.admissionDate || p.createdAt) >= start,
-          );
-        }
-        if (endDate) {
-          const end = new Date(endDate);
-          end.setHours(23, 59, 59, 999);
-          list = list.filter(
-            (p) => new Date(p.admissionDate || p.createdAt) <= end,
-          );
-        }
-
-        // Attach doctor details
-        list = list.map((pat) => {
-          const doc = doctors.find((d) => d.id === pat.doctorId);
-          return {
-            ...pat,
-            doctorName: doc ? doc.name : "Unassigned",
-            doctorHospital: doc ? doc.hospital : "N/A",
-            doctorSpecialization: doc ? doc.specialization : "N/A",
-          };
-        });
-
-        // Sort
-        list.sort((a, b) => {
-          let valA = a[sortBy] || "";
-          let valB = b[sortBy] || "";
-          if (sortBy === "admissionDate" || sortBy === "createdAt") {
-            valA = new Date(valA).getTime();
-            valB = new Date(valB).getTime();
-          } else if (typeof valA === "string") {
-            valA = valA.toLowerCase();
-            valB = valB.toLowerCase();
-          }
-          if (valA < valB) return order === "asc" ? -1 : 1;
-          if (valA > valB) return order === "asc" ? 1 : -1;
-          return 0;
-        });
-
-        // Pagination
-        const total = list.length;
-        const totalPages = Math.ceil(total / limit) || 1;
-        const currentPage = Math.max(1, Math.min(page, totalPages));
-        const startIndex = (currentPage - 1) * limit;
-        const paginatedPatients = list.slice(startIndex, startIndex + limit);
-
-        return {
-          data: paginatedPatients,
-          pagination: {
-            total,
-            totalPages,
-            page: currentPage,
-            limit,
-            hasNextPage: currentPage < totalPages,
-            hasPrevPage: currentPage > 1,
-          },
-        };
-      },
-    );
+    return apiRequest(`/patients?${params.toString()}`);
   },
 
   async getPatientsByDoctor(doctorId) {
-    return fetchWithFallback(
-      `/doctors/${doctorId}/patients`,
-      { method: "GET" },
-      () => {
-        const patients = getStoredPatients();
-        return patients.filter((p) => p.doctorId === doctorId);
-      },
-    );
+    if (!doctorId) {
+      throw new Error("Doctor ID is required");
+    }
+
+    return apiRequest(`/doctors/${doctorId}/patients`, {
+      method: "GET",
+    });
   },
 
   async createPatient(data) {
-    return fetchWithFallback(
-      "/patients",
-      {
-        method: "POST",
-        body: JSON.stringify(data),
-      },
-      () => {
-        const patients = getStoredPatients();
-        if (!data.name || !data.condition) {
-          throw new Error("Patient name and condition are required.");
-        }
-        const newPatient = {
-          id: `pat_${Date.now()}`,
-          name: data.name.trim(),
-          age: Number(data.age) || 30,
-          gender: data.gender || "Other",
-          doctorId: data.doctorId || null,
-          condition: data.condition.trim(),
-          conditionCategory: data.conditionCategory || "General",
-          status: data.status || "Active",
-          phone: data.phone?.trim() || "",
-          email: data.email?.trim() || "",
-          admissionDate:
-            data.admissionDate || new Date().toISOString().split("T")[0],
-          createdAt: new Date().toISOString(),
-          notes: data.notes || "",
-        };
-        const updated = [newPatient, ...patients];
-        saveStoredPatients(updated);
-        return newPatient;
-      },
-    );
+    const name = data.name?.trim();
+    const condition = data.condition?.trim();
+
+    if (!name || !condition) {
+      throw new Error("Patient name and condition are required.");
+    }
+
+    const patientData = {
+      ...data,
+      name,
+      condition,
+    };
+
+    return apiRequest("/patients", {
+      method: "POST",
+      body: JSON.stringify(patientData),
+    });
   },
 
   async updatePatient(id, data) {
-    return fetchWithFallback(
-      `/patients/${id}`,
-      {
-        method: "PUT",
-        body: JSON.stringify(data),
-      },
-      () => {
-        const patients = getStoredPatients();
-        const index = patients.findIndex((p) => p.id === id);
-        if (index === -1) throw new Error("Patient not found");
+    if (!id) {
+      throw new Error("Patient ID is required");
+    }
 
-        const updatedPatient = {
-          ...patients[index],
-          ...data,
-          id, // preserve ID
-        };
-        patients[index] = updatedPatient;
-        saveStoredPatients(patients);
-        return updatedPatient;
-      },
-    );
+    return apiRequest(`/patients/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
   },
 
   async deletePatient(id) {
-    return fetchWithFallback(`/patients/${id}`, { method: "DELETE" }, () => {
-      const patients = getStoredPatients();
-      const updated = patients.filter((p) => p.id !== id);
-      saveStoredPatients(updated);
-      return { success: true, id };
+    if (!id) {
+      throw new Error("Patient ID is required");
+    }
+
+    return apiRequest(`/patients/${id}`, {
+      method: "DELETE",
     });
   },
 

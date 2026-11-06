@@ -65,8 +65,13 @@ export default function DoctorsPage() {
         limit: pagination.limit,
       });
 
-      setDoctors(res.data || []);
-      setPagination(res.pagination || { page: 1, limit: 6, total: 0, totalPages: 1 });
+    setDoctors(res.doctors || []);
+    setPagination({
+      page: res.pagination?.currentPage || 1,
+      limit: res.pagination?.limit || 6,
+      total: res.pagination?.totalDoctors || 0,
+      totalPages: res.pagination?.totalPages || 1,
+    });
     } catch {
       toast.error("Failed to load doctors list");
     } finally {
@@ -89,7 +94,7 @@ export default function DoctorsPage() {
 
   const handleSaveDoctor = async (formData) => {
     if (selectedDoctorForEdit) {
-      await api.updateDoctor(selectedDoctorForEdit.id, formData);
+      await api.updateDoctor(selectedDoctorForEdit._id, formData);
       toast.success(`Updated Dr. ${formData.name.replace("Dr. ", "")}`);
     } else {
       await api.createDoctor(formData);
@@ -102,7 +107,7 @@ export default function DoctorsPage() {
     if (!doctorToDelete) return;
     try {
       setIsDeleting(true);
-      await api.deleteDoctor(doctorToDelete.id);
+      await api.deleteDoctor(doctorToDelete._id);
       toast.success(`Removed ${doctorToDelete.name} from directory`);
       setDoctorToDelete(null);
       fetchDoctors();
@@ -315,7 +320,7 @@ export default function DoctorsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {doctors.map((doctor) => (
               <DoctorCard
-                key={doctor.id}
+                key={doctor._id}
                 doctor={doctor}
                 onViewPatients={(doc) => setSelectedDoctorForView(doc)}
                 onEdit={(doc) => {

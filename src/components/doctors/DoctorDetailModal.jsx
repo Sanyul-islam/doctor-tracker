@@ -44,17 +44,18 @@ export function DoctorDetailModal({ isOpen, onClose, doctor, onPatientUpdated })
   const [isAdding, setIsAdding] = useState(false);
 
   const fetchDoctorPatients = useCallback(async () => {
-    if (!doctor?.id) return;
+    if (!doctor?._id) return;
+
     try {
       setIsLoading(true);
-      const res = await api.getPatientsByDoctor(doctor.id);
+      const res = await api.getPatientsByDoctor(doctor._id);
       setPatients(res || []);
     } catch {
       toast.error("Failed to load doctor's patients");
     } finally {
       setIsLoading(false);
     }
-  }, [doctor?.id, toast]);
+  }, [doctor?._id, toast]);
 
   useEffect(() => {
     if (isOpen && doctor) {
@@ -72,10 +73,10 @@ export function DoctorDetailModal({ isOpen, onClose, doctor, onPatientUpdated })
 
     try {
       setIsAdding(true);
-      await api.createPatient({
-        ...newPatient,
-        doctorId: doctor.id,
-      });
+     await api.createPatient({
+       ...newPatient,
+       doctorId: doctor._id,
+     });
       toast.success(`${newPatient.name} added under Dr. ${doctor.name.replace("Dr. ", "")}`);
       setNewPatient({
         name: "",
@@ -102,7 +103,7 @@ export function DoctorDetailModal({ isOpen, onClose, doctor, onPatientUpdated })
     if (!patientToDelete) return;
     try {
       setIsDeleting(true);
-      await api.deletePatient(patientToDelete.id);
+      await api.deletePatient(patientToDelete._id);
       toast.success(`Removed patient ${patientToDelete.name}`);
       setPatientToDelete(null);
       await fetchDoctorPatients();
@@ -346,7 +347,7 @@ export function DoctorDetailModal({ isOpen, onClose, doctor, onPatientUpdated })
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                       {patients.map((pat) => (
                         <tr
-                          key={pat.id}
+                          key={pat._id}
                           className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors"
                         >
                           <td className="py-3 px-4 font-semibold text-slate-900 dark:text-white">

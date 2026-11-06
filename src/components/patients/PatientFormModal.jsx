@@ -13,6 +13,10 @@ export function PatientFormModal({
   doctors = [],
 }) {
   const isEditing = !!patient;
+  const getDoctorId = (doctor) => {
+    if (!doctor) return "";
+    return typeof doctor === "object" ? doctor._id || doctor.id || "" : doctor;
+  };
 
   const [formData, setFormData] = useState({
     name: "",
@@ -37,7 +41,7 @@ export function PatientFormModal({
         name: patient.name || "",
         age: patient.age || "",
         gender: patient.gender || "Female",
-        doctorId: patient.doctorId || (doctors[0]?.id || ""),
+        doctorId: getDoctorId(patient.doctorId) || "",
         condition: patient.condition || "",
         conditionCategory: patient.conditionCategory || CONDITION_CATEGORIES[0],
         status: patient.status || "Active",
@@ -53,7 +57,7 @@ export function PatientFormModal({
         name: "",
         age: "",
         gender: "Female",
-        doctorId: doctors[0]?.id || "",
+        doctorId: doctors[0]?._id || doctors[0]?.id || "",
         condition: "",
         conditionCategory: CONDITION_CATEGORIES[0] || "Cardiovascular",
         status: "Active",
@@ -111,45 +115,59 @@ export function PatientFormModal({
         {/* Basic Info: Name, Age, Gender */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="sm:col-span-1">
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
               Full Name <span className="text-rose-500">*</span>
             </label>
             <input
               type="text"
               placeholder="e.g. Arthur Pendelton"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                errors.name ? "border-rose-500" : "border-slate-200 dark:border-slate-700"
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                errors.name
+                  ? "border-rose-500"
+                  : "border-slate-200 dark:border-slate-700"
               }`}
             />
-            {errors.name && <p className="text-xs text-rose-500 mt-1">{errors.name}</p>}
+            {errors.name && (
+              <p className="text-xs text-rose-500 mt-1">{errors.name}</p>
+            )}
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
               Age
             </label>
             <input
               type="number"
               placeholder="e.g. 54"
               value={formData.age}
-              onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                errors.age ? "border-rose-500" : "border-slate-200 dark:border-slate-700"
+              onChange={(e) =>
+                setFormData({ ...formData, age: e.target.value })
+              }
+              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm bg-white text-sm text-slate-900  placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                errors.age
+                  ? "border-rose-500"
+                  : "border-slate-200 dark:border-slate-700"
               }`}
             />
-            {errors.age && <p className="text-xs text-rose-500 mt-1">{errors.age}</p>}
+            {errors.age && (
+              <p className="text-xs text-rose-500 mt-1">{errors.age}</p>
+            )}
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
               Gender
             </label>
             <select
               value={formData.gender}
-              onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              onChange={(e) =>
+                setFormData({ ...formData, gender: e.target.value })
+              }
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <option value="Female">Female</option>
               <option value="Male">Male</option>
@@ -161,17 +179,20 @@ export function PatientFormModal({
         {/* Doctor Assignment & Status */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
               Assigned Doctor
             </label>
             <select
               value={formData.doctorId}
-              onChange={(e) => setFormData({ ...formData, doctorId: e.target.value })}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              onChange={(e) =>
+                setFormData({ ...formData, doctorId: e.target.value })
+              }
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <option value="">-- Unassigned --</option>
+
               {doctors.map((doc) => (
-                <option key={doc.id} value={doc.id}>
+                <option key={doc._id || doc.id} value={doc._id || doc.id}>
                   {doc.name} ({doc.specialization} - {doc.hospital})
                 </option>
               ))}
@@ -179,13 +200,15 @@ export function PatientFormModal({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
               Patient Status <span className="text-rose-500">*</span>
             </label>
             <select
               value={formData.status}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              onChange={(e) =>
+                setFormData({ ...formData, status: e.target.value })
+              }
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               {PATIENT_STATUSES.map((status) => (
                 <option key={status} value={status}>
@@ -199,29 +222,37 @@ export function PatientFormModal({
         {/* Condition & Category */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
               Diagnosis / Condition <span className="text-rose-500">*</span>
             </label>
             <input
               type="text"
               placeholder="e.g. Type 2 Diabetes"
               value={formData.condition}
-              onChange={(e) => setFormData({ ...formData, condition: e.target.value })}
-              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                errors.condition ? "border-rose-500" : "border-slate-200 dark:border-slate-700"
+              onChange={(e) =>
+                setFormData({ ...formData, condition: e.target.value })
+              }
+              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                errors.condition
+                  ? "border-rose-500"
+                  : "border-slate-200 dark:border-slate-700"
               }`}
             />
-            {errors.condition && <p className="text-xs text-rose-500 mt-1">{errors.condition}</p>}
+            {errors.condition && (
+              <p className="text-xs text-rose-500 mt-1">{errors.condition}</p>
+            )}
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
               Condition Category
             </label>
             <select
               value={formData.conditionCategory}
-              onChange={(e) => setFormData({ ...formData, conditionCategory: e.target.value })}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              onChange={(e) =>
+                setFormData({ ...formData, conditionCategory: e.target.value })
+              }
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               {CONDITION_CATEGORIES.map((cat) => (
                 <option key={cat} value={cat}>
@@ -235,55 +266,63 @@ export function PatientFormModal({
         {/* Contact info & Admission Date */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
               Admission Date <span className="text-rose-500">*</span>
             </label>
             <input
               type="date"
               value={formData.admissionDate}
-              onChange={(e) => setFormData({ ...formData, admissionDate: e.target.value })}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              onChange={(e) =>
+                setFormData({ ...formData, admissionDate: e.target.value })
+              }
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
               Contact Phone
             </label>
             <input
               type="tel"
               placeholder="+1 (555) 000-0000"
               value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              onChange={(e) =>
+                setFormData({ ...formData, phone: e.target.value })
+              }
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
               Email
             </label>
             <input
               type="email"
               placeholder="patient@example.com"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
         </div>
 
         {/* Clinical Notes */}
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
             Clinical Notes / Follow-up Protocol
           </label>
           <textarea
             rows={3}
             placeholder="Important medical notes, prescription regimens, or follow-up milestones..."
             value={formData.notes}
-            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-            className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            onChange={(e) =>
+              setFormData({ ...formData, notes: e.target.value })
+            }
+            className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </div>
 
